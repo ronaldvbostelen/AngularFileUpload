@@ -23,16 +23,16 @@ namespace AngularFileUpload.Controllers
         }
 
         [HttpGet("{id:int}/forms/{formId:int}")]
-        public async Task<FormSubmissionResult> ViewSubmissionResult(int id, int formId)
+        public async Task<FileSubmissionResult> ViewSubmissionResult(int id, int formId)
         {
             _logger.LogInformation($"viewing the form#{formId}, for ID={id}");
             await Task.Delay(1000);
-            return new FormSubmissionResult {FormId = formId, Id = id};
+            return new FileSubmissionResult {FormId = formId, Id = id};
         }
 
         [HttpPost("{id:int}/single")]
         [RequestSizeLimit(long.MaxValue)]
-        public async Task<ActionResult<FormSubmissionResult>> SubmitFile(int id, [FromForm] Form form)
+        public async Task<ActionResult<FileSubmissionResult>> SubmitFile(int id, [FromForm] Form form)
         {
             _logger.LogInformation($"Validating the form#{form.FormId} for ID={id}");
 
@@ -46,7 +46,7 @@ namespace AngularFileUpload.Controllers
                 return BadRequest("The uploaded file is empty.");
             }
 
-            var filePath = Path.Combine(@"App_Data", id.ToString(), DateTime.Now.ToFileTime() + Path.GetExtension(form.File.FileName));
+            var filePath = Path.Combine(@"App_Data", id.ToString(), DateTime.Now.ToFileTime().ToString(), form.File.FileName);
             new FileInfo(filePath).Directory?.Create();
 
             await using (var stream = new FileStream(filePath, FileMode.Create))
@@ -56,7 +56,7 @@ namespace AngularFileUpload.Controllers
                 _logger.LogInformation($"\t The uploaded file is saved as [{filePath}].");
             }
 
-            var result = new FormSubmissionResult {FormId = form.FormId, Id = id, FileSize = form.File.Length};
+            var result = new FileSubmissionResult {FormId = form.FormId, Id = id, FileSize = form.File.Length, Name = form.File.FileName };
             return CreatedAtAction(nameof(SubmitFile), new {id, form.FormId}, result);
         }
 
@@ -70,10 +70,11 @@ namespace AngularFileUpload.Controllers
             }
             
             var result = new List<SubmissionResult>();
-
+            var dirPath = Path.Combine(@"App_Data", id.ToString(), @"Files", DateTime.Now.ToFileTime().ToString());
+            
             foreach (var formFile in files)
             {
-                var filePath = Path.Combine(@"App_Data", id.ToString(), @"Files", formFile.FileName);
+                var filePath = Path.Combine(dirPath, formFile.FileName);
                 new FileInfo(filePath).Directory?.Create();
 
                 await using var stream = new FileStream(filePath, FileMode.Create);

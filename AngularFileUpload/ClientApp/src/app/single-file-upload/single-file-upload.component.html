@@ -1,13 +1,15 @@
 <h2>Form #{{ formId }}</h2>
 
 <div class="my-2">
-  <label class="btn btn-secondary" (click)="fileInput.value = null">
+  <label>User Id: </label> <input [(ngModel)]="id"/><br />
+  <label>File Id: </label> <input [(ngModel)]="formId"/> <br />
+  <label class="btn btn-primary" (click)="fileInput.value = null">
     Choose File
     <input #fileInput
            type="file"
            accept="*"
            style="display: none"
-           (change)="chooseFile(fileInput.files)" />
+           (change)="chooseFile(fileInput.files)"/>
   </label>
 </div>
 
@@ -22,7 +24,7 @@
                      [value]="uploadProgress"></ngb-progressbar>
   </div>
   <button type="button"
-          class="btn btn-primary mt-2"
+          class="btn btn-success mt-2"
           (click)="upload()"
           [disabled]="uploading">
     <span *ngIf="!uploading">Upload</span>

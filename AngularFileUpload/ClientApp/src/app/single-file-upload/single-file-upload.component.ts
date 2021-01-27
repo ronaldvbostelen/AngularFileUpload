@@ -17,8 +17,8 @@ import { FormSubmissionResult } from '../models/FormSubmissionResult';
 })
 /** single-file-upload component*/
 export class SingleFileUploadComponent implements OnInit {
-  id = 9998;
-  formId = 12;
+  id = 9;
+  formId = 1;
   uploadProgress = 0;
   selectedFile: File;
   uploading = false;
