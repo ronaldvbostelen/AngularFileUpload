@@ -52,6 +52,7 @@ export class MultipleFilesUploadComponent implements OnInit {
     const formData = new FormData();
     this.selectedFiles.forEach(f => formData.append('files', f));
 
+    console.log(formData);
     const req = new HttpRequest(
       'POST',
       `api/upload/${this.id}/multiple`,

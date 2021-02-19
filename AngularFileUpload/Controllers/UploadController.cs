@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace AngularFileUpload.Controllers
 {
@@ -31,7 +33,7 @@ namespace AngularFileUpload.Controllers
         }
 
         [HttpPost("{id:int}/single")]
-        [RequestSizeLimit(long.MaxValue)]
+        [RequestSizeLimit(1000000000)]
         public async Task<ActionResult<FileSubmissionResult>> SubmitFile(int id, [FromForm] Form form)
         {
             _logger.LogInformation($"Validating the form#{form.FormId} for ID={id}");
@@ -61,8 +63,9 @@ namespace AngularFileUpload.Controllers
         }
 
         [HttpPost("{id:int}/multiple")]
-        [RequestSizeLimit(long.MaxValue)]
-        public async Task<ActionResult<List<SubmissionResult>>> SubmitFiles(int id, [Required] List<IFormFile> files)
+        [RequestSizeLimit(1000000000)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 1000000000)]
+        public async Task<ActionResult<List<SubmissionResult>>> SubmitFiles(int id, List<IFormFile> files)
         {
             if (files == null || files.Count == 0)
             {
